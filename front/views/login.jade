@@ -1,0 +1,28 @@
+extends layout
+
+block content
+  #container
+    .pure-u-1
+      .content
+        h2 Bienvenido
+        form.pure-form.pure-form-aligned
+
+          fieldset
+            legend Iniciar sesión
+            .pure-control-group
+              label(for='username') Usuario:
+              input#username(type='text', placeholder='Usuario', autocomplete='off')
+            .pure-control-group
+              label(for='password') Password:
+              input#password(type='password', placeholder='Password')
+            .pure-control-group
+              label(for='local') Local:
+              select#local
+            .pure-controls
+              button.pure-button.pure-button-primary.login(type='button') Ingresar
+
+    
+block js
+  
+  script(src='/js/actions/login.js')
+  

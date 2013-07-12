@@ -1,0 +1,14 @@
+@import url("//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.min.css");
+a{color:#3b8bba;text-decoration:none;}
+a:hover{color:#265777}
+.header,.content,.pedido,.pedido-detalle{padding:10px 20px}
+.header{border:0;border-bottom:1px solid #b7b7b7}
+.pedido-detalle{font-size:80%;border-left:1px solid #b7b7b7}
+#pedido-lista ul,#pedido-lista li{list-style-type:none;margin:0}
+.pure-button-success,.pure-button-error,.pure-button-warning,.pure-button-secondary{color:#fff;-webkit-border-radius:4px;border-radius:4px;text-shadow:0 1px 1px rgba(0,0,0,0.2)}
+.pure-button-success{background:#1cb841}
+.pure-button-error{background:#ca3c3c}
+.pure-button-warning{background:#df7514}
+.pure-button-secondary{background:#42b8dd}
+.align-center{text-align:center}
+.pure-table-centered{width:90%;margin:auto}

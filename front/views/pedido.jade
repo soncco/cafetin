@@ -1,0 +1,67 @@
+extends layout
+
+block content
+  #container
+    .pure-u-3-5
+      .pedido
+        h2 Nuevo pedido
+        form.pure-form
+          fieldset
+            legend Cliente
+            
+            .pure-control-group
+              input#cliente.pure-input-1(type='text', placeholder='Escoge un cliente')
+
+          fieldset
+            legend Platos
+            .pure-control-group
+              input#cantidad.pure-input-1-3(type='number', placeholder='Cantidad', min='1')
+
+              input#platos.pure-input-1-3(type='text', placeholder='Escoge un plato')
+
+              button.pure-input-1-3.pure-button.pure-button-success.add-plato(type='button') Añadir
+              input#current-plato(type='hidden', data-id='', value='')
+
+    .pure-u-2-5
+      .pedido-detalle.align-center
+        h2 Detalles del pedido
+
+        h3 Cliente
+        p.cliente-nombre(data-id='')
+
+        table.pure-table.pure-table-horizontal.pure-table-centered
+          thead
+            tr
+              th Cantidad
+              th Plato
+              th Acciones
+
+          tbody#detalle-pedido
+
+        form.pure-form
+          fieldset
+            #actions.pure-control-group(style='display: none')
+              p
+                textarea#observaciones.pure-input-1(rows='3',placeholder='Observaciones del pedido')
+              button.pure-button.pure-button-secondary.do(type='button') Grabar
+              &nbsp;
+              button.pure-button.pure-button-warning.do-clear(type='button') Grabar y hacer otro
+              &nbsp;
+              button.pure-button.pure-button-error.clear(type='button') Limpiar
+
+block js
+  script#template(type='text/template')
+    td <%= cantidad %>
+    td <%= platoNombre %>
+    td
+      a.pure-button.pure-button-error.remove-plato
+        i.icon-remove
+
+  script(src='/js/vendor/underscore-min.js')
+  script(src='/js/vendor/backbone-min.js')
+  script(src='/js/models/detalle.js')
+  script(src='/js/collections/detalles.js')
+  script(src='/js/views/detalles.js')
+  script(src='/js/views/app-pedido.js')
+  script(src='/js/actions/pedido.js')
+  

@@ -1,0 +1,21 @@
+extends layout
+
+block content
+  
+  h2 Carta
+  
+  table#carta.pure-table.pure-table-horizontal.pure-table-centered
+    thead
+      tr
+        th Plato
+        th Precio
+        th Tipo
+        th Foto
+    tbody
+
+block js
+  script(src='/js/vendor/jquery.colorbox-min.js')
+  script(src='/js/actions/carta.js')
+
+block css
+  link(rel='stylesheet', href='/css/colorbox.css')
