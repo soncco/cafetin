@@ -12,7 +12,6 @@
     "nib": "*",
     "socket.io": "*",
     "express-uglify": "*",
-    "session.socket.io": "*",
-    "connect": "*"
+    "connect": "*" 
   }
 }

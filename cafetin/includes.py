@@ -17,3 +17,10 @@ def pedido_json(pedido):
     'hecho_por': pedido.hecho_por.username,
     'fecha': str(pedido.cuando),
   }
+
+def total_pedido(pedido):
+  total = 0
+  for detalle in pedido.pedidodetalle_set.all():
+    total += detalle.plato.precio
+
+  return total

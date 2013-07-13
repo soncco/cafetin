@@ -1,0 +1,17 @@
+<style>
+  .big {font-size: 10cm;  }
+  .small {font-size: 1cm;  }
+</style>
+
+<h1 class="big">ola ke ase</h1>
+{% for cliente in test %}
+<p>{{cliente.apellidos}}</p>
+{% endfor %}
+
+<table border="1" cellpadding="10">
+  <thead>
+    <th>Nombre</th>
+    <th>Apellido</th>
+    <th>Direccion</th>
+  </thead>
+</table>

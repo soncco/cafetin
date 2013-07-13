@@ -12,6 +12,30 @@ var cafetin = cafetin || {};
     }
   };
 
+  atenderPedido = function() {
+    atender = window.confirm('¿Está seguro de marcar este pedido como atendido?');
+
+    if(atender) {
+      socket.emit('pedido:atender', {'id': $(this).data('id')});
+    }
+  };
+
+  printPedido = function() {
+    print = window.confirm('Se enviará el documento a impresión ¿Está seguro?');
+
+    if(print) {
+      socket.emit('pedido:print', {'id': $(this).data('id')});
+    }
+  };
+
+  payPedido = function() {
+    pay = window.confirm('¿Está seguro de marcar este pedido como PAGADO?');
+
+    if(pay) {
+      socket.emit('pedido:pay', {'id': $(this).data('id')});
+    }
+  };
+
   parseDetalles = function(detalles) {
     $ul = $('<ul></ul>');
     $li = $('<li></li>'); 
@@ -30,7 +54,9 @@ var cafetin = cafetin || {};
     $tr = $('<tr></tr>');
     $td = $('<td></td>');
     $status = $('<span class="pure-button"></span>');
-    $edit = $('<button class="pure-button pure-button-secondary edit" data-id=""></button>&nbsp;').html($('<i class="icon-pencil"></i>'));
+    $edit = $('<button class="pure-button pure-button-secondary attend" data-id=""></button>&nbsp;').html($('<i class="icon-check"></i>'));
+    $print = $('<button class="pure-button pure-button-secondary print" data-id=""></button>&nbsp;').html($('<i class="icon-print"></i>'));
+    $pay = $('<button class="pure-button pure-button-success pay" data-id=""></button>&nbsp;').html($('<i class="icon-money"></i>'));
     $delete = $('<button class="pure-button pure-button-error delete" data-id=""></button>').html($('<i class="icon-remove"></i>'));    
 
     $td.clone().text(pedido.para).appendTo($tr);
@@ -39,10 +65,39 @@ var cafetin = cafetin || {};
     $td.clone().text(pedido.hecho_por).appendTo($tr);
     $td.clone().text(jQuery.timeago(pedido.fecha)).addClass('timeago').appendTo($tr);
     $td.clone().html($status.text(cafetin.estados[pedido.estado].texto).addClass(cafetin.estados[pedido.estado].clase)).appendTo($tr);
-    $td.clone().append($edit.data('id', pedido.id)).appendTo($tr);
-    $td.clone().append($delete.data('id', pedido.id)).appendTo($tr);
+
+    switch(pedido.estado) {
+      case 'R':
+        $print.hide();
+        $pay.hide();
+      break;
+      case 'A':
+        $edit.hide();
+        $pay.hide();
+        $delete.hide();
+      break;
+      case 'I':
+        $edit.hide();
+        $delete.hide();
+      break;
+      case 'P':
+        $edit.hide();
+        $delete.hide();
+      break;
+    }
+
+    $td.clone()
+        .append($edit.data('id', pedido.id))
+        .append($print.data('id', pedido.id))
+        .append($pay.data('id', pedido.id))
+        .append($delete.data('id', pedido.id))
+      .addClass('actions')
+      .appendTo($tr);
 
     $tr.delegate('.delete', 'click', removePedido);
+    $tr.delegate('.attend', 'click', atenderPedido);
+    $tr.delegate('.print', 'click', printPedido);
+    $tr.delegate('.pay', 'click', payPedido);
 
     $tr
       .attr('id', 'row-' + pedido.id)
@@ -72,7 +127,42 @@ var cafetin = cafetin || {};
   });
 
   socket.on('pedido:quitado', function(data) {
+    console.log(data);
     $tbody.find('#row-' + data.id).hide('highlight', {}, 1000);
+  });
+
+  socket.on('pedido:atendido', function(data) {
+    $tbody.find('#row-' + data.id + ' .attend')
+      .remove();
+    
+    $tbody.find('#row-' + data.id + ' .print')
+      .toggle('slide');
+
+    $tbody.find('#row-' + data.id + ' span')
+      .hide('puff')
+      .removeClass('pure-button-error')
+      .addClass('pure-button-warning')
+      .text('Atendido')
+      .show('slide');
+
+    $tbody.find('#row-' + data.id + ' .delete')
+      .remove();
+
+  });
+
+  socket.on('pedido:printed', function(data) {
+    console.log(data);
+    window.open(cafetin.server + '/pedido/print/' + data.id, 'print','width=200,height=400');
+    $tbody.find('#row-' + data.id + ' .pay')
+      .toggle('puff');
+
+    $tbody.find('#row-' + data.id + ' span')
+      .hide('puff')
+      .removeClass('pure-button-warning')
+      .addClass('pure-button-secondary')
+      .text('Impreso')
+      .show('slide');
+
   });
 
   setTimeout(function() {

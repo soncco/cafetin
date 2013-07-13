@@ -1,0 +1,5 @@
+# Libraries
+sudo apt-get install python-reportlab python-html5lib
+
+sudo easy_install pip
+req.txt

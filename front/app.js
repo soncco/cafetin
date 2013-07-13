@@ -9,7 +9,6 @@ var express = require('express')
   , querystring = require('querystring')
   , stylus = require('stylus')
   , http = require('http')
-  , connect = require('connect')
   , path = require('path');
 
 var app = express()
@@ -40,17 +39,17 @@ app.use(require('express-uglify').middleware({
   src: __dirname + '/public'
 }));
 
-/*function checkAuth(req, res, next) {
-  if (!req.session.user_id) {
-    res.send('You are not authorized to view this page');
-    res.redirect('/login');
-  }
-}*/
+function checkAuth(req, res, next) {
+  //console.log(io);
+  next();
+}
+
+var theSecret = 'fm@tt9-7i&p#2l4q2*#5jxcr1d5xo4$$0iy@^nk79gi0zg0*71';
 
 // Add POST, PUT, DELETE methods to the app.
 app.use(express.bodyParser());
-app.use(express.cookieParser('fm@tt9-7i&p#2l4q2*#5jxcr1d5xo4$$0iy@^nk79gi0zg0*71'));
 app.use(express.methodOverride());
+app.use(express.cookieParser(theSecret));
 app.use(express.session());
 
 // Paths.
@@ -66,14 +65,17 @@ if ('development' == app.get('env')) {
 app.get('/login', routes.login);
 app.get('/logout', routes.logout);
 
-app.get('/', routes.index);
-app.get('/pedido', routes.pedido);
+app.get('/', checkAuth, routes.index);
+app.get('/pedido', checkAuth, routes.pedido);
 app.get('/pedido/lista', routes.pedido_lista);
 app.get('/carta', routes.carta);
 
 /*app.post('/test', routes.test);*/
 
+// Sockets.
 io.sockets.on('connection', function(socket) {
+
+  // Crear pedido.
   socket.on('pedido:nuevo', function(data) {
     var values = querystring.stringify(data);
     var options = {
@@ -104,6 +106,7 @@ io.sockets.on('connection', function(socket) {
 
   });
 
+  // Quitar pedido.
   socket.on('pedido:quitar', function(data) {
     var values = querystring.stringify(data);
     var options = {
@@ -133,6 +136,98 @@ io.sockets.on('connection', function(socket) {
     req.end();
   });
 
+  // Atender pedido.
+  socket.on('pedido:atender', function(data) {
+    var values = querystring.stringify(data);
+    var options = {
+      hostname: 'localhost',
+      port: '8000',
+      path: '/pedido/atender',
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded',
+        'Content-Length': values.length
+      }
+    };
+
+    var req = http.request(options, function(res) {
+      res.setEncoding('utf8');
+      res.on('data', function(data) {
+        data = JSON.parse(data);
+        io.sockets.emit('pedido:atendido', data);
+      });
+    });
+
+    req.on('error', function(e) {
+      console.log('problem with request: ' + e.message)
+    })
+
+    req.write(values);
+    req.end();
+  });
+
+  // Imprimir pedido.
+  socket.on('pedido:print', function(data) {
+    var values = querystring.stringify(data);
+    var options = {
+      hostname: 'localhost',
+      port: '8000',
+      path: '/pedido/printed',
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded',
+        'Content-Length': values.length
+      }
+    };
+
+    var req = http.request(options, function(res) {
+      res.setEncoding('utf8');
+      res.on('data', function(data) {
+        data = JSON.parse(data);
+        console.log('printed' +  data);
+        io.sockets.emit('pedido:printed', data);
+      });
+    });
+
+    req.on('error', function(e) {
+      console.log('problem with request: ' + e.message)
+    })
+
+    req.write(values);
+    req.end();
+  });
+
+  // Pagar pedido.
+  socket.on('pedido:atender', function(data) {
+    var values = querystring.stringify(data);
+    var options = {
+      hostname: 'localhost',
+      port: '8000',
+      path: '/pedido/pay',
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded',
+        'Content-Length': values.length
+      }
+    };
+
+    var req = http.request(options, function(res) {
+      res.setEncoding('utf8');
+      res.on('data', function(data) {
+        data = JSON.parse(data);
+        io.sockets.emit('pedido:paid', data);
+      });
+    });
+
+    req.on('error', function(e) {
+      console.log('problem with request: ' + e.message)
+    })
+
+    req.write(values);
+    req.end();
+  });
+
+  // Login.
   socket.on('login', function(data) {
     var values = querystring.stringify(data);
     var options = {
@@ -150,6 +245,8 @@ io.sockets.on('connection', function(socket) {
       res.setEncoding('utf8');
       res.on('data', function(data) {
         data = JSON.parse(data);
+        if(data.status == 'ok')
+          socket.user = data.user;
         io.sockets.emit('logged', data);
       });
     });

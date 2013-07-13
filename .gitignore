@@ -37,7 +37,7 @@ Thumbs.db
 .pydevproject
 
 # Uploaded files
-ninos/media/fotos/*
+child/media/fotos/*
 
 # Copied from https://github.com/LearnBoost/socket.io/blob/master/.gitignore
 .DS_Store

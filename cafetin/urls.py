@@ -16,7 +16,15 @@ urlpatterns = patterns('cafetin.views',
   url(r'^pedido/add$', 'add_pedido', name = 'agrega_pedido'),
   url(r'^pedido/json$', 'json_pedidos', name = 'pedidos_json'),
   url(r'^pedido/remove$', 'remove_pedido', name = 'quita_pedido'),
+  url(r'^pedido/atender$', 'atender_pedido', name = 'atender_pedido'),
+  url(r'^pedido/printed$', 'pedido_printed',   name = 'pedido_printed'),
+  url(r'^pedido/pay$', 'pay_pedido',   name = 'pay_pedido'),
+
+  url(r'^pedido/print/(?P<id>.*)/$', 'print_pedido',   name = 'print_pedido'),
+  
 
   url(r'^local/json$', 'locales_json', name = 'locales_json'),
+
+  url(r'^testpdf$', 'theviewcito', name = 'theviewcito'),
 
 )

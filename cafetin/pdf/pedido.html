@@ -1,0 +1,43 @@
+<style>
+  @page {
+    size: A6 landscape;
+    margin: 0.5cm;
+  }
+  * {font-size: 0.2cm;}
+  .maintitle {
+    font-size: 0.6cm !important;
+    margin-bottom: 0;
+    border-bottom: 1px solid #000;
+  }
+  .smallcell {width: 20%;}  
+  .align-right { text-align: right;}
+  .align-left { text-align: left;}
+</style>
+<h1 class="maintitle">Detalle de Consumo</h1>
+<p><strong>Cliente</strong>: {{pedido.para}}</p>
+<p><strong>Habitación</strong>: {{ pedido.para.hospedado_en }}</p>
+<p><strong>Atendido por</strong>: {{ pedido.hecho_por.username }}</p>
+<p><strong>Fecha</strong>: {{ pedido.cuando }}</p>
+<table border="1" cellpadding="5">
+  <thead>
+    <tr style="background: #EEE;">
+      <th class="smallcell">Cantidad</th>
+      <th>Plato</th>
+      <th class="smallcell">Precio S/.</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for detalle in pedido.pedidodetalle_set.all %}
+    <tr>
+      <td class="smallcell">{{ detalle.cantidad }}</td>
+      <td>{{ detalle.plato.nombre }}</td>
+      <td class="align-right">{{ detalle.plato.precio }}</td>
+    </tr>
+    {% endfor %} 
+  </tbody>
+  <tfoot>
+    <th colspan="2" class="align-right">Total:</th>
+    <th class="align-right">{{ total }}</th>
+  </tfoot>
+</table>
+<p><strong>Notas</strong>: {{ pedido.notas }}</p>

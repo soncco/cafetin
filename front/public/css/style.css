@@ -1,6 +1,7 @@
 @import url("//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.min.css");
 a{color:#3b8bba;text-decoration:none;}
 a:hover{color:#265777}
+table .actions button{margin-right:4px}
 .header,.content,.pedido,.pedido-detalle{padding:10px 20px}
 .header{border:0;border-bottom:1px solid #b7b7b7}
 .pedido-detalle{font-size:80%;border-left:1px solid #b7b7b7}
