@@ -36,6 +36,9 @@ Thumbs.db
 .project
 .pydevproject
 
+# Generated files
+front/public/css/style.css
+
 # Uploaded files
 child/media/fotos/*
 
