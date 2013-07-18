@@ -25,7 +25,7 @@ var cafetin = cafetin || {};
       parseLocales(data);
     }
   });
-
+/*
   $('.login').click(function() {
     data = {
       'username': $username.val(),
@@ -38,7 +38,7 @@ var cafetin = cafetin || {};
   socket.on('logged', function(data) {
     console.log(data);
   });
-
+*/
   $('#username').focus();
   
 })(jQuery);

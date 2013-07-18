@@ -63,6 +63,10 @@ if ('development' == app.get('env')) {
 
 // Routes.
 app.get('/login', routes.login);
+app.post('/login', function (req, res) {
+  console.log(req);
+  res.end(req.body.username);
+});
 app.get('/logout', routes.logout);
 
 app.get('/', checkAuth, routes.index);
@@ -75,13 +79,12 @@ app.get('/carta', routes.carta);
 // Sockets.
 io.sockets.on('connection', function(socket) {
 
-  // Crear pedido.
-  socket.on('pedido:nuevo', function(data) {
-    var values = querystring.stringify(data);
+  var actions = function(params) {
+    values = querystring.stringify(params.data);
     var options = {
       hostname: 'localhost',
       port: '8000',
-      path: '/pedido/add',
+      path: params.path,
       method: 'POST',
       headers: {
         'Content-type': 'application/x-www-form-urlencoded',
@@ -93,7 +96,15 @@ io.sockets.on('connection', function(socket) {
       res.setEncoding('utf8');
       res.on('data', function(data) {
         data = JSON.parse(data);
-        io.sockets.emit('pedido:creado', data);
+        if(!params.alone) // For all.
+          io.sockets.emit(params.socketResponse, data);
+        else { // For me.
+          if(params.extraResponse) {
+            socket.emit(params.extraResponse, data);
+            io.sockets.emit(params.socketResponse, data);
+          } else
+            socket.emit(params.socketResponse, data);  
+        }
       });
     });
 
@@ -103,161 +114,64 @@ io.sockets.on('connection', function(socket) {
 
     req.write(values);
     req.end();
+  };
 
+  // Crear pedido.
+  socket.on('pedido:nuevo', function(data) {
+    params = {
+      data: data,
+      path: '/pedido/add',
+      socketResponse: 'pedido:creado',
+      alone: true,      
+    };
+    actions(params);
   });
 
   // Quitar pedido.
   socket.on('pedido:quitar', function(data) {
-    var values = querystring.stringify(data);
-    var options = {
-      hostname: 'localhost',
-      port: '8000',
+    params = {
+      data: data,
       path: '/pedido/remove',
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/x-www-form-urlencoded',
-        'Content-Length': values.length
-      }
+      socketResponse: 'pedido:quitado',
+      alone: false
     };
-
-    var req = http.request(options, function(res) {
-      res.setEncoding('utf8');
-      res.on('data', function(data) {
-        data = JSON.parse(data);
-        io.sockets.emit('pedido:quitado', data);
-      });
-    });
-
-    req.on('error', function(e) {
-      console.log('problem with request: ' + e.message)
-    })
-
-    req.write(values);
-    req.end();
+    actions(params);
   });
 
   // Atender pedido.
   socket.on('pedido:atender', function(data) {
-    var values = querystring.stringify(data);
-    var options = {
-      hostname: 'localhost',
-      port: '8000',
+    params = {
+      data: data,
       path: '/pedido/atender',
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/x-www-form-urlencoded',
-        'Content-Length': values.length
-      }
+      socketResponse: 'pedido:atendido',
+      alone: false
     };
-
-    var req = http.request(options, function(res) {
-      res.setEncoding('utf8');
-      res.on('data', function(data) {
-        data = JSON.parse(data);
-        io.sockets.emit('pedido:atendido', data);
-      });
-    });
-
-    req.on('error', function(e) {
-      console.log('problem with request: ' + e.message)
-    })
-
-    req.write(values);
-    req.end();
+    actions(params);
   });
 
   // Imprimir pedido.
   socket.on('pedido:print', function(data) {
-    var values = querystring.stringify(data);
-    var options = {
-      hostname: 'localhost',
-      port: '8000',
+    params = {
+      data: data,
       path: '/pedido/printed',
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/x-www-form-urlencoded',
-        'Content-Length': values.length
-      }
+      socketResponse: 'pedido:printed',
+      alone: true,
+      extraResponse: 'printforme'
     };
-
-    var req = http.request(options, function(res) {
-      res.setEncoding('utf8');
-      res.on('data', function(data) {
-        data = JSON.parse(data);
-        console.log('printed' +  data);
-        io.sockets.emit('pedido:printed', data);
-      });
-    });
-
-    req.on('error', function(e) {
-      console.log('problem with request: ' + e.message)
-    })
-
-    req.write(values);
-    req.end();
+    actions(params);
   });
 
   // Pagar pedido.
-  socket.on('pedido:atender', function(data) {
-    var values = querystring.stringify(data);
-    var options = {
-      hostname: 'localhost',
-      port: '8000',
+  socket.on('pedido:pay', function(data) {
+    params = {
+      data: data,
       path: '/pedido/pay',
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/x-www-form-urlencoded',
-        'Content-Length': values.length
-      }
+      socketResponse: 'pedido:paid',
+      alone: false
     };
-
-    var req = http.request(options, function(res) {
-      res.setEncoding('utf8');
-      res.on('data', function(data) {
-        data = JSON.parse(data);
-        io.sockets.emit('pedido:paid', data);
-      });
-    });
-
-    req.on('error', function(e) {
-      console.log('problem with request: ' + e.message)
-    })
-
-    req.write(values);
-    req.end();
+    actions(params);
   });
 
-  // Login.
-  socket.on('login', function(data) {
-    var values = querystring.stringify(data);
-    var options = {
-      hostname: 'localhost',
-      port: '8000',
-      path: '/login',
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/x-www-form-urlencoded',
-        'Content-Length': values.length
-      }
-    };
-
-    var req = http.request(options, function(res) {
-      res.setEncoding('utf8');
-      res.on('data', function(data) {
-        data = JSON.parse(data);
-        if(data.status == 'ok')
-          socket.user = data.user;
-        io.sockets.emit('logged', data);
-      });
-    });
-
-    req.on('error', function(e) {
-      console.log('problem with request: ' + e.message)
-    })
-
-    req.write(values);
-    req.end();
-  });
 });
 
 server.listen(3000, '0.0.0.0');

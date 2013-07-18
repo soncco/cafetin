@@ -5,21 +5,21 @@ block content
     .pure-u-1
       .content
         h2 Bienvenido
-        form.pure-form.pure-form-aligned
+        form.pure-form.pure-form-aligned(action='/login', method='POST')
 
           fieldset
             legend Iniciar sesión
             .pure-control-group
               label(for='username') Usuario:
-              input#username(type='text', placeholder='Usuario', autocomplete='off')
+              input#username(name='username', type='text', placeholder='Usuario', autocomplete='off')
             .pure-control-group
               label(for='password') Password:
-              input#password(type='password', placeholder='Password')
+              input#password(name='password', type='password', placeholder='Password')
             .pure-control-group
               label(for='local') Local:
               select#local
             .pure-controls
-              button.pure-button.pure-button-primary.login(type='button') Ingresar
+              button.pure-button.pure-button-primary.login(type='submit') Ingresar
 
     
 block js

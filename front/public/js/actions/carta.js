@@ -2,7 +2,9 @@ var cafetin = cafetin || {};
 
 (function($) {
 
-  var $tbody = $('#carta tbody');
+  var
+    $tbody = $('#carta tbody')
+    , $filter = $('#filter');
 
   parsePlato = function(pedido) {
     
@@ -11,8 +13,9 @@ var cafetin = cafetin || {};
     $tr = $('<tr></tr>');
     $td = $('<td></td>');
     $imgurl = $('<a class="colorbox">Ver foto</a>');
+    $span = $('<span></span>')
 
-    $td.clone().text(pedido.nombre).appendTo($tr);
+    $td.clone().html($span.text(pedido.nombre)).appendTo($tr);
     $td.clone().text(pedido.precio).appendTo($tr);
     $td.clone().text(pedido.tipo).appendTo($tr);
     $td.clone().html(
@@ -37,7 +40,11 @@ var cafetin = cafetin || {};
     dataType: "jsonp",
     success: function( data ) {
       parseCarta(data);
+      
+      $tbody.liveFilter($filter, 'tr', {
+        filterChildSelector: 'span'
+      });
     }
   });
-
+  
 })(jQuery);

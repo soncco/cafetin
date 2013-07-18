@@ -1,7 +1,8 @@
 var cafetin = cafetin || {};
 
-cafetin.server = 'http://192.168.1.33:8000';
-cafetin.socketserver = 'http://192.168.1.33:3000';
+cafetin.ip = 'http://192.168.1.33';
+cafetin.server = cafetin.ip + ':8000';
+cafetin.socketserver = cafetin.ip + ':3000';
 cafetin.media = cafetin.server + '/media/';
 
 cafetin.estados = {

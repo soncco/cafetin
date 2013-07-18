@@ -151,8 +151,7 @@ var cafetin = cafetin || {};
   });
 
   socket.on('pedido:printed', function(data) {
-    console.log(data);
-    window.open(cafetin.server + '/pedido/print/' + data.id, 'print','width=200,height=400');
+    
     $tbody.find('#row-' + data.id + ' .pay')
       .toggle('puff');
 
@@ -162,10 +161,23 @@ var cafetin = cafetin || {};
       .addClass('pure-button-secondary')
       .text('Impreso')
       .show('slide');
-
   });
+
+  socket.on('pedido:paid', function(data) {
+    $tbody.find('#row-' + data.id + ' span')
+      .hide('puff')
+      .removeClass('pure-button-secondary')
+      .addClass('pure-button-success')
+      .text('Pagado')
+      .show('slide'); 
+  });
+
+  socket.on('printforme', function(data) {
+    window.open(cafetin.server + '/pedido/print/' + data.id, 'print','width=200,height=400');
+  }); 
 
   setTimeout(function() {
     location.reload();
   }, 300000);
+
 })(jQuery);
