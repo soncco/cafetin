@@ -122,7 +122,7 @@ var cafetin = cafetin || {};
     }
   });
 
-  socket.on('pedido:creado', function(data) {
+  socket.on('pedido:nuevo', function(data) {
     parsePedido(data.pedido);
   });
 

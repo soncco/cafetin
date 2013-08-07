@@ -122,7 +122,8 @@ io.sockets.on('connection', function(socket) {
       data: data,
       path: '/pedido/add',
       socketResponse: 'pedido:creado',
-      alone: true,      
+      alone: true,
+      extraResponse: 'pedido:nuevo'
     };
     actions(params);
   });
