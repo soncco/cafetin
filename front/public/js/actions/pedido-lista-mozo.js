@@ -62,7 +62,6 @@ var cafetin = cafetin || {};
         $print.hide();
       break;
       case 'A':
-        $pay.hide();
         $delete.hide();
       break;
       case 'I':

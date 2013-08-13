@@ -5,3 +5,25 @@ block content
   p Acabas de ingresar a 
     span.pure-button.pure-button-warning #{user.local.nombre}
     |  y tienes disponible las siguientes opciones:
+
+  ul
+    // Menú de mozos.
+    if user.groups.indexOf('Mozos') >= 0
+      li
+        a(href='/pedido') Hacer un pedido
+      li
+        a(href='/pedido/lista/mozo') Ver el estado de los pedidos que hiciste
+      li
+        a(href='/carta') Ver la carta
+
+    // Menú de cocina.
+    if user.groups.indexOf('Cocina') >= 0
+      li
+        a(href='/pedido/lista/cocina') Atender pedidos hechos por los mozos
+
+    // Menú de administración.
+    if user.groups.indexOf('Admin') >= 0
+      li
+        a(href='/pedido/lista/admin') Ver o marcar pedidos como pagados
+    li
+      a(href='/logout') Salir

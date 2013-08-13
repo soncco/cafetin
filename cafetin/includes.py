@@ -28,6 +28,6 @@ def pedido_json(pedido):
 def total_pedido(pedido):
   total = 0
   for detalle in pedido.pedidodetalle_set.all():
-    total += detalle.plato.precio
+    total += detalle.plato.precio * detalle.cantidad
 
   return total
