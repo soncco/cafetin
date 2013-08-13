@@ -6,7 +6,12 @@ block content
       .content
         h2 Bienvenido
         form.pure-form.pure-form-aligned(action='/login', method='POST')
-
+          if error == 'error'
+            .message.error
+              | Usuario o contraseña incorrectos
+          if stauts == 'logout'
+            .message.success
+              | ¡Hasta pronto!
           fieldset
             legend Iniciar sesión
             .pure-control-group
@@ -17,12 +22,11 @@ block content
               input#password(name='password', type='password', placeholder='Password')
             .pure-control-group
               label(for='local') Local:
-              select#local
+              select#local(name='local')
             .pure-controls
               button.pure-button.pure-button-primary.login(type='submit') Ingresar
 
     
 block js
-  
   script(src='/js/actions/login.js')
   
