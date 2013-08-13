@@ -12,6 +12,7 @@
     "nib": "*",
     "socket.io": "*",
     "express-uglify": "*",
-    "connect": "*" 
+    "connect": "*",
+    "sanitizer": "*"
   }
 }

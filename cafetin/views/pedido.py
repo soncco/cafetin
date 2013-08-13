@@ -7,8 +7,9 @@ from cafetin.includes import pedido_json, total_pedido
 from django_xhtml2pdf.utils import generate_pdf
 import json, datetime
 
+
 @csrf_exempt
-def add_pedido(request):
+def add_pedido_old(request):
 
   if request.method == "POST":
     dictx = request.POST.copy()
@@ -17,8 +18,8 @@ def add_pedido(request):
     cantidad = dictx.getlist('cantidad')
     platos = dictx.getlist('platos')
     observaciones = dictx.get('observaciones')
-
-    hecho_por = User.objects.get(id = 1)
+    hecho_por = User.objects.get(id = dictx.get('hecho_por'))
+    local = User.objects.get(id = dictx.get('local'))
 
     try:
       p = Pedido(hecho_por = hecho_por, para = para, cuando = datetime.datetime.now(), notas = observaciones)
@@ -38,6 +39,57 @@ def add_pedido(request):
   
   return HttpResponse(json)
 
+
+@csrf_exempt
+def add_pedido(request):
+
+  if request.method == "POST":
+    dictx = request.POST.copy()
+
+    para = Cliente.objects.get(id = dictx.get('para'))
+    cantidad = dictx.getlist('cantidad')
+    platos = dictx.getlist('platos')
+    observaciones = dictx.get('observaciones')
+    hecho_por = User.objects.get(id = dictx.get('hecho_por'))
+    local = User.objects.get(id = dictx.get('local'))
+
+    pedidos = []
+
+    puntos = []
+
+    for (key, plato) in enumerate(platos):
+      pl = Plato.objects.get(id = plato)
+      punto = pl.de_venta_en.get(pertenece_a = local)
+      puntos.append(punto)
+
+    # Removiendo duplicados.
+    puntos = list(set(puntos))
+
+    # Creando pedidos para cada punto.
+    for punto in puntos:
+      try:
+        p = Pedido(hecho_por = hecho_por, para = para, cuando = datetime.datetime.now(), notas = observaciones, punto = punto)
+        p.save()
+      except Exception as e:
+        print '%s (%s)' % (e.message, type(e))
+        context = {'status': 'error'}
+        return HttpResponse(json.dumps(context), content_type="application/json")
+
+      # Añade pedidos según el plato
+      for (key, plato) in enumerate(platos):
+        pl = Plato.objects.get(id = plato)
+        if punto in list(pl.de_venta_en.all()):
+          detalle = PedidoDetalle(pertenece_al_pedido = p, plato = pl, cantidad = cantidad[key])
+          detalle.save()
+
+      pedidos.append(pedido_json(p))
+
+    context = {'status': 'ok', 'pedidos': pedidos}
+    return HttpResponse(json.dumps(context), content_type="application/json")
+
+  return HttpResponse(json)
+
+
 def json_pedidos(request):
   pedidos = Pedido.objects.filter().order_by('cuando')
   callback = request.GET.get('callback')
@@ -47,6 +99,17 @@ def json_pedidos(request):
     response.append(pedido_json(pedido))
 
   return HttpResponse(callback + '(' + json.dumps(response) + ')', mimetype = "application/json")
+
+def json_pedidos_mozo(request, mozo):
+  pedidos = Pedido.objects.filter(hecho_por = mozo).order_by('cuando')
+  print pedidos
+  callback = request.GET.get('callback')
+
+  response = []
+  for pedido in pedidos:
+    response.append(pedido_json(pedido))
+
+  return HttpResponse(callback + '(' + json.dumps(response) + ')', mimetype = "application/json") 
 
 @csrf_exempt
 def remove_pedido(request):
