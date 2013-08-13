@@ -41,9 +41,9 @@ app.use(stylus.middleware({
   }
 ));
 
-/*app.use(require('express-uglify').middleware({
+app.use(require('express-uglify').middleware({
   src: __dirname + '/public'
-}));*/
+}));
 
 var theSecret = 'fm@tt9-7i&p#2l4q2*#5jxcr1d5xo4$$0iy@^nk79gi0zg0*71';
 
