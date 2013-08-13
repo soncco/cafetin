@@ -22,6 +22,12 @@ function compile(str, path) {
     .use(nib());
 }
 
+app.locals = {
+  site: {
+    title: 'Sistema de Cafetín'
+  }
+};
+
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
@@ -35,14 +41,9 @@ app.use(stylus.middleware({
   }
 ));
 
-app.use(require('express-uglify').middleware({
+/*app.use(require('express-uglify').middleware({
   src: __dirname + '/public'
-}));
-
-function checkAuth(req, res, next) {
-  //console.log(io);
-  next();
-}
+}));*/
 
 var theSecret = 'fm@tt9-7i&p#2l4q2*#5jxcr1d5xo4$$0iy@^nk79gi0zg0*71';
 
@@ -61,18 +62,29 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
+var checkAuth = function(req, res, next) {
+  if (!req.session.user) {
+    res.redirect('login');
+  } else {
+    next();
+  }
+}
+
 // Routes.
 app.get('/login', routes.login);
-app.post('/login', function (req, res) {
-  console.log(req);
-  res.end(req.body.username);
-});
+app.post('/login', routes.loginPost);
 app.get('/logout', routes.logout);
+
+app.get('*', function(req, res, next) {
+  res.locals.user = req.session.user;
+  next();
+});
 
 app.get('/', checkAuth, routes.index);
 app.get('/pedido', checkAuth, routes.pedido);
-app.get('/pedido/lista', routes.pedido_lista);
-app.get('/carta', routes.carta);
+app.get('/pedido/lista', checkAuth, routes.pedido_lista);
+app.get('/pedido/lista/mozo', checkAuth, routes.pedido_lista_mozo);
+app.get('/carta', checkAuth, routes.carta);
 
 /*app.post('/test', routes.test);*/
 
@@ -100,8 +112,8 @@ io.sockets.on('connection', function(socket) {
           io.sockets.emit(params.socketResponse, data);
         else { // For me.
           if(params.extraResponse) {
-            socket.emit(params.extraResponse, data);
             io.sockets.emit(params.socketResponse, data);
+            socket.emit(params.extraResponse, data);
           } else
             socket.emit(params.socketResponse, data);  
         }
@@ -123,7 +135,7 @@ io.sockets.on('connection', function(socket) {
       path: '/pedido/add',
       socketResponse: 'pedido:creado',
       alone: true,
-      extraResponse: 'pedido:nuevo'
+      extraResponse: 'pedido:creadoForMe'
     };
     actions(params);
   });

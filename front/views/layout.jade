@@ -1,7 +1,7 @@
 doctype 5
 html
   head
-    title= title
+    title= site.title
     meta(name='view-port', content='width=device-width, initial-scale=1')
     link(rel='stylesheet', href='http://yui.yahooapis.com/pure/0.2.0/pure-min.css')
     link(rel='stylesheet', href='http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css')
@@ -13,20 +13,55 @@ html
         .pure-menu.pure-menu-open.pure-menu-horizontal.pure-menu-fixed
           a.pure-menu-heading(href='/') Cafetín
           ul
-            li
-              a(href='/pedido') Hacer pedido
-            li
-              a(href='/pedido/lista') Lista de pedidos
-            li
-              a(href='/carta') Carta
+            if user 
+              // Menú de mozos.
+              if user.groups.indexOf('Mozos') >= 0
+                li
+                  a(href='/pedido') Pedidos 
+                li
+                  a(href='/pedido/lista/mozo') Lista de pedidos
+                li
+                  a(href='/carta') Carta
+
+              // Menú de cocina.
+              if user.groups.indexOf('Cocina') >= 0
+                li
+                  a(href='/pedido/lista/cocina') Lista de pedidos
+
+              // Menú de administración.
+              if user.groups.indexOf('Admin') >= 0
+                li
+                  a(href='#') Informes
+              li
+                a(href='/logout') Salir
+            else
+              li
+                a(href='/login') Ingresar
 
       .pure-u-1.content
         block content
+
+      .pure-u-1
+        footer.footer.align-right
+          if user
+            p Usuario actual: 
+              strong #{user.first} (#{user.username})
+              |  Local: 
+              strong #{user.local.nombre}
+          else
+            p Cafetin 2013
+
 
     script(src='/js/vendor/jquery.min.js')
     script(src='/js/vendor/jquery-ui.min.js')
     script(src='/js/actions/vars.js')
     script(src='/socket.io/socket.io.js')
-    script.
-      var socket = io.connect(cafetin.socketserver);
+    if user
+      script.
+        var socket = io.connect(cafetin.socketserver);
+        cafetin.uid = #{user.id};
+        cafetin.local = #{user.local.id};
+    else
+      script.
+        var socket = io.connect(cafetin.socketserver);
     block js

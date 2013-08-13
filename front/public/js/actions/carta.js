@@ -13,7 +13,7 @@ var cafetin = cafetin || {};
     $tr = $('<tr></tr>');
     $td = $('<td></td>');
     $imgurl = $('<a class="colorbox">Ver foto</a>');
-    $span = $('<span></span>')
+    $span = $('<span></span>');
 
     $td.clone().html($span.text(pedido.nombre)).appendTo($tr);
     $td.clone().text(pedido.precio).appendTo($tr);

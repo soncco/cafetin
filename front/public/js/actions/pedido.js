@@ -39,7 +39,7 @@ var cafetin = cafetin || {};
   $( "#platos" ).autocomplete({
     source: function( request, response ) {
       $.ajax({
-        url: cafetin.server + "/plato/" + request.term,
+        url: cafetin.server + "/plato/" + cafetin.local + "/" + request.term,
         dataType: "jsonp",
         success: function( data ) {
           //console.log(data);
@@ -75,7 +75,9 @@ var cafetin = cafetin || {};
       para: $('.cliente-nombre').data('id'),
       cantidad: cantidades,
       platos: platos,
-      observaciones: $('#observaciones').val()
+      observaciones: $('#observaciones').val(),
+      hecho_por: cafetin.uid,
+      local: cafetin.local
     };
     socket.emit('pedido:nuevo', pedido);
   };
@@ -91,7 +93,8 @@ var cafetin = cafetin || {};
   });
 
   // Event Handler.
-  socket.on('pedido:creado', function(data) {
+  socket.on('pedido:creadoForMe', function(data) {
+    console.log(data);
     if(data.status == 'ok') {
       alert('El pedido se ha creado correctamente.');
       if(flagClear) {
@@ -102,7 +105,7 @@ var cafetin = cafetin || {};
         $('.cliente-nombre').text('');    
       }
       else {
-        location.href = '/pedido/lista';
+        location.href = '/pedido/lista/mozo';
       }
     } else {
       alert('Hubo un error al crear el pedido, intenta nuevamente.');
