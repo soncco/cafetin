@@ -99,6 +99,7 @@ class Pedido(models.Model):
   para = models.ForeignKey(Cliente)
   cuando = models.DateTimeField()
   estado = models.CharField(max_length = 1, choices = ESTADOS, default = 'R')
+  punto = models.ForeignKey(Punto)
   notas = models.TextField()
 
 class PedidoDetalle(models.Model):
