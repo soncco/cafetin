@@ -102,7 +102,16 @@ def json_pedidos(request):
 
 def json_pedidos_mozo(request, mozo):
   pedidos = Pedido.objects.filter(hecho_por = mozo).order_by('cuando')
-  print pedidos
+  callback = request.GET.get('callback')
+
+  response = []
+  for pedido in pedidos:
+    response.append(pedido_json(pedido))
+
+  return HttpResponse(callback + '(' + json.dumps(response) + ')', mimetype = "application/json") 
+
+def json_pedidos_punto(request, punto):
+  pedidos = Pedido.objects.filter(punto = punto).order_by('cuando')
   callback = request.GET.get('callback')
 
   response = []
