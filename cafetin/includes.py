@@ -1,6 +1,12 @@
 def pedido_json(pedido):
   cliente = pedido.para
   fecha = pedido.cuando
+
+  # Local donde se ha vendido.
+  punto = pedido.punto
+  local = punto.pertenece_a.id
+
+  # Detalles
   detalles = []
   for detalle in pedido.pedidodetalle_set.all():
     detalles.append({
@@ -14,8 +20,9 @@ def pedido_json(pedido):
     'estado': pedido.estado,
     'comentarios': pedido.notas,
     'detalles': detalles,
-    'hecho_por': pedido.hecho_por.username,
+    'hecho_por': pedido.hecho_por.first_name,
     'fecha': str(pedido.cuando),
+    'local': local
   }
 
 def total_pedido(pedido):
