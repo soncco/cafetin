@@ -1,1 +1,7 @@
 extends layout
+
+block content
+  h2 ¡Bienvenido #{user.first}!
+  p Acabas de ingresar a 
+    span.pure-button.pure-button-warning #{user.local.nombre}
+    |  y tienes disponible las siguientes opciones:

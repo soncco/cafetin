@@ -1,4 +1,5 @@
 from general import *
+from habitacion import *
 from plato import *
 from cliente import *
 from pedido import *

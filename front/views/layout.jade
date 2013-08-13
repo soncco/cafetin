@@ -19,19 +19,19 @@ html
                 li
                   a(href='/pedido') Pedidos 
                 li
-                  a(href='/pedido/lista/mozo') Lista de pedidos
+                  a(href='/pedido/lista/mozo') Ver estado de pedidos
                 li
                   a(href='/carta') Carta
 
               // Menú de cocina.
               if user.groups.indexOf('Cocina') >= 0
                 li
-                  a(href='/pedido/lista/cocina') Lista de pedidos
+                  a(href='/pedido/lista/cocina') Atender pedidos
 
               // Menú de administración.
               if user.groups.indexOf('Admin') >= 0
                 li
-                  a(href='#') Informes
+                  a(href='/pedido/lista/admin') Administrar pedidos
               li
                 a(href='/logout') Salir
             else

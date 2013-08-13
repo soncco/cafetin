@@ -1,0 +1,28 @@
+extends layout
+
+block content
+  h2 Pedidos de habitaciones
+  form.pure-form
+    fieldset
+      legend Local: #{user.local.nombre}
+      label(for='rooms') Habitación: 
+      select.rooms#rooms
+      &nbsp;
+      button.pure-button.pure-button-primary.show(type='button') Ver pedidos
+
+  table#pedido-lista.pure-table.pure-table-horizontal.pure-table-centered
+    thead
+      tr
+        th Cliente
+        th Pedido
+        th Comentarios
+        th Hecho por
+        th Fecha
+        th Estado
+        th(colspan='2') Acciones
+    tbody
+  
+block js
+  
+  script(src='/js/vendor/jquery.timeago.js')
+  script(src='/js/actions/pedidos-habitacion.js')

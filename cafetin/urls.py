@@ -25,6 +25,7 @@ urlpatterns = patterns('cafetin.views',
   url(r'^pedido/json$', 'json_pedidos', name = 'pedidos_json'),
   url(r'^pedido/json/mozo/(?P<mozo>.*)/$', 'json_pedidos_mozo', name = 'pedidos_mozo_json'),
   url(r'^pedido/json/punto/(?P<punto>.*)/$', 'json_pedidos_punto', name = 'pedidos_punto_json'),
+  url(r'^pedido/json/habitacion/(?P<habitacion>.*)/$', 'json_pedidos_habitacion', name = 'pedidos_habitacion_json'),
 
 
   url(r'^pedido/remove$', 'remove_pedido', name = 'quita_pedido'),
@@ -36,6 +37,8 @@ urlpatterns = patterns('cafetin.views',
   
 
   url(r'^local/json$', 'locales_json', name = 'locales_json'),
+
+  url(r'^habitacion/json/(?P<local>.*)$', 'habitaciones_local', name = 'habitaciones_local_json'),
 
   url(r'^testpdf$', 'theviewcito', name = 'theviewcito'),
 

@@ -120,6 +120,18 @@ def json_pedidos_punto(request, punto):
 
   return HttpResponse(callback + '(' + json.dumps(response) + ')', mimetype = "application/json") 
 
+def json_pedidos_habitacion(request, habitacion):
+  clientes = Cliente.objects.filter(hospedado_en = habitacion, activo = True)
+  callback = request.GET.get('callback')
+
+  response = []
+  for cliente in clientes:
+    pedidos = Pedido.objects.filter(para = cliente)
+    for pedido in pedidos:
+      response.append(pedido_json(pedido))
+
+  return HttpResponse(callback + '(' + json.dumps(response) + ')', mimetype = "application/json") 
+
 @csrf_exempt
 def remove_pedido(request):
   if request.method == "POST":

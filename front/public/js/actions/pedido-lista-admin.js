@@ -2,23 +2,17 @@ var cafetin = cafetin || {};
 
 (function($) {
 
-  // El punto.
-  var punto;
-
-  // Los puntos.
-  $puntos = $('.puntos');
-
-  // Trae los puntos de un local.
-  $.ajax({
-    url: cafetin.server + "/punto/json/" + cafetin.local,
-    dataType: "jsonp",
-    success: function( data ) {
-      parsePuntos(data);
-    }
-  });
-
   // La tabla.
   var $tbody = $('#pedido-lista tbody');
+
+  // Quita un pedido.
+  removePedido = function() {
+    remover = window.confirm('¿Está seguro de remover este pedido?');
+
+    if(remover) {
+      socket.emit('pedido:quitar', {'id': $(this).data('id')});
+    }
+  };
 
   atenderPedido = function() {
     atender = window.confirm('¿Está seguro de marcar este pedido como atendido?');
@@ -28,22 +22,21 @@ var cafetin = cafetin || {};
     }
   };
 
-  showPedidos = function(e) {
-    $this = $(this);
-    $this.parent().parent().find('li').removeClass('pure-menu-selected');
-    $this.parent().addClass('pure-menu-selected');
-    punto = $this.data('id');
+  // Imprime un pedido.
+  printPedido = function() {
+    print = window.confirm('Se enviará el documento a impresión ¿Está seguro?');
 
-    // Trae los pedidos.
-    $.ajax({
-      url: cafetin.server + "/pedido/json/punto/" + punto,
-      dataType: "jsonp",
-      success: function( data ) {
-        parsePedidos(data);
-      }
-    });
+    if(print) {
+      socket.emit('pedido:print', {'id': $(this).data('id')});
+    }
+  };
 
-    e.preventDefault();
+  payPedido = function() {
+    pay = window.confirm('¿Está seguro de marcar este pedido como PAGADO?');
+
+    if(pay) {
+      socket.emit('pedido:pay', {'id': $(this).data('id')});
+    }
   };
 
   // Parsea los detalles del pedido JSON en una lista HTML.
@@ -68,6 +61,9 @@ var cafetin = cafetin || {};
     $td = $('<td></td>');
     $status = $('<span class="pure-button"></span>');
     $edit = $('<button class="pure-button pure-button-secondary attend" data-id=""></button>&nbsp;').html($('<i class="icon-check"></i>'));
+    $print = $('<button class="pure-button pure-button-secondary print" data-id=""></button>&nbsp;').html($('<i class="icon-print"></i>'));
+    $pay = $('<button class="pure-button pure-button-success pay" data-id=""></button>&nbsp;').html($('<i class="icon-money"></i>'));
+    $delete = $('<button class="pure-button pure-button-error delete" data-id=""></button>').html($('<i class="icon-remove"></i>'));    
 
     $td.clone().text(pedido.para).appendTo($tr);
     $td.clone().html(parseDetalles(pedido.detalles)).appendTo($tr);
@@ -79,25 +75,37 @@ var cafetin = cafetin || {};
     // Verifica los estados del pedido.
     switch(pedido.estado) {
       case 'R':
+        $print.hide();
+        $pay.hide();
       break;
       case 'A':
         $edit.hide();
+        $pay.hide();
+        $delete.hide();
       break;
       case 'I':
         $edit.hide();
+        $delete.hide();
       break;
       case 'P':
         $edit.hide();
+        $delete.hide();
       break;
     }
 
     $td.clone()
         .append($edit.data('id', pedido.id))
+        .append($print.data('id', pedido.id))
+        .append($pay.data('id', pedido.id))
+        .append($delete.data('id', pedido.id))
       .addClass('actions')
       .appendTo($tr);
 
     // Agrega eventos a los botones.
+    $tr.delegate('.delete', 'click', removePedido);
     $tr.delegate('.attend', 'click', atenderPedido);
+    $tr.delegate('.print', 'click', printPedido);
+    $tr.delegate('.pay', 'click', payPedido);
 
     // Crea la fila.
     $tr
@@ -110,34 +118,25 @@ var cafetin = cafetin || {};
 
   // Parsea pedidos de JSON a una tabla HTML.
   parsePedidos = function(pedidos) {
-    $tbody.empty();
     for(i = 0; i < pedidos.length; i++) {
       row = pedidos[i];
       parsePedido(row);
     }
   };
 
-  // Parsea puntos de JSON a una lista HTML.
-  parsePuntos = function(puntos) {
-    for(i = 0; i < puntos.length; i++) {
-      row = puntos[i];
-      $li = $('<li></li>');
-      $a = $('<a href="#"></a>').addClass('menu-item');
-      $li.html($a.clone().data('id', row.id).text(row.nombre)).appendTo($puntos);
-
-      // Eventos al menú.
-      $li.delegate('.menu-item', 'click', showPedidos);
+  // Trae los pedidos.
+  $.ajax({
+    url: cafetin.server + "/pedido/json",
+    dataType: "jsonp",
+    success: function( data ) {
+      parsePedidos(data);
     }
-  };
+  });
 
   // Sockets.
   // Crea un pedido.
   socket.on('pedido:creado', function(data) {
-    for(i = 0; i < data.pedidos.length; i++) {
-      pedido = data.pedidos[i];
-      if(pedido.local == cafetin.local)
-        parsePedido(pedido);
-    }
+    parsePedido(data.pedido);
   });
 
   // Quita un pedido.
@@ -168,15 +167,15 @@ var cafetin = cafetin || {};
   // Marca un pedido como impreso.
   socket.on('pedido:printed', function(data) {
     
-    $el = $tbody.find('#row-' + data.id + ' span');
-    if($el.text() != 'Pagado') {
-      $el
-        .hide('puff')
-        .removeClass('pure-button-warning')
-        .addClass('pure-button-secondary')
-        .text('Impreso')
-        .show('slide');
-    }
+    $tbody.find('#row-' + data.id + ' .pay')
+      .toggle('puff');
+
+    $tbody.find('#row-' + data.id + ' span')
+      .hide('puff')
+      .removeClass('pure-button-warning')
+      .addClass('pure-button-secondary')
+      .text('Impreso')
+      .show('slide');
   });
 
   // Marca un pedido como pagado.
@@ -188,6 +187,11 @@ var cafetin = cafetin || {};
       .text('Pagado')
       .show('slide'); 
   });
+
+  // Muestra una ventana con el comprobante.
+  socket.on('printforme', function(data) {
+    window.open(cafetin.server + '/pedido/print/' + data.id, 'print','width=200,height=400');
+  }); 
 
   // Recarga la página cada 5 minutos.
   setTimeout(function() {

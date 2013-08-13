@@ -81,6 +81,10 @@ exports.pedido_lista_cocina = function(req, res) {
   res.render('pedido-lista-cocina');
 };
 
+exports.pedido_lista_admin = function(req, res) {
+  res.render('pedido-lista-admin');
+};
+
 exports.carta = function(req, res) {
   res.render('carta');
 };
