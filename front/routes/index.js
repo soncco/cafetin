@@ -77,6 +77,10 @@ exports.pedido_lista_mozo = function(req, res) {
   res.render('pedido-lista-mozo');
 };
 
+exports.pedido_lista_cocina = function(req, res) {
+  res.render('pedido-lista-cocina');
+};
+
 exports.carta = function(req, res) {
   res.render('carta');
 };

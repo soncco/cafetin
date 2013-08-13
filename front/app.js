@@ -84,6 +84,7 @@ app.get('/', checkAuth, routes.index);
 app.get('/pedido', checkAuth, routes.pedido);
 app.get('/pedido/lista', checkAuth, routes.pedido_lista);
 app.get('/pedido/lista/mozo', checkAuth, routes.pedido_lista_mozo);
+app.get('/pedido/lista/cocina', checkAuth, routes.pedido_lista_cocina);
 app.get('/carta', checkAuth, routes.carta);
 
 /*app.post('/test', routes.test);*/

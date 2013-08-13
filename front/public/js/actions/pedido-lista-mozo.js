@@ -51,8 +51,6 @@ var cafetin = cafetin || {};
     $delete = $('<button class="pure-button pure-button-error delete" data-id=""></button>')
       .html($('<i class="icon-remove"></i>'));
 
-    console.log(pedido);
-
     $td.clone().text(pedido.para).appendTo($tr);
     $td.clone().html(parseDetalles(pedido.detalles)).appendTo($tr);
     $td.clone().text(pedido.comentarios).appendTo($tr);

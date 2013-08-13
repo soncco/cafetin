@@ -2,6 +2,21 @@ var cafetin = cafetin || {};
 
 (function($) {
 
+  // El punto.
+  var punto;
+
+  // Los puntos.
+  $puntos = $('.puntos');
+
+  // Trae los puntos de un local.
+  $.ajax({
+    url: cafetin.server + "/punto/json/" + cafetin.local,
+    dataType: "jsonp",
+    success: function( data ) {
+      parsePuntos(data);
+    }
+  });
+
   // La tabla.
   var $tbody = $('#pedido-lista tbody');
 
@@ -12,6 +27,24 @@ var cafetin = cafetin || {};
       socket.emit('pedido:atender', {'id': $(this).data('id')});
     }
   };
+
+  showPedidos = function(e) {
+    $this = $(this);
+    $this.parent().parent().find('li').removeClass('pure-menu-selected');
+    $this.parent().addClass('pure-menu-selected');
+    punto = $this.data('id');
+
+    // Trae los pedidos.
+    $.ajax({
+      url: cafetin.server + "/pedido/json/punto/" + punto,
+      dataType: "jsonp",
+      success: function( data ) {
+        parsePedidos(data);
+      }
+    });
+
+    e.preventDefault();
+  }
 
   // Parsea los detalles del pedido JSON en una lista HTML.
   parseDetalles = function(detalles) {
@@ -77,26 +110,34 @@ var cafetin = cafetin || {};
 
   // Parsea pedidos de JSON a una tabla HTML.
   parsePedidos = function(pedidos) {
+    $tbody.empty();
     for(i = 0; i < pedidos.length; i++) {
       row = pedidos[i];
       parsePedido(row);
     }
   };
 
-  // Trae los pedidos.
-  $.ajax({
-    url: cafetin.server + "/pedido/json",
-    dataType: "jsonp",
-    success: function( data ) {
-      parsePedidos(data);
+  // Parsea puntos de JSON a una lista HTML.
+  parsePuntos = function(puntos) {
+    for(i = 0; i < puntos.length; i++) {
+      row = puntos[i];
+      $li = $('<li></li>');
+      $a = $('<a href="#"></a>').addClass('menu-item');
+      $li.html($a.clone().data('id', row.id).text(row.nombre)).appendTo($puntos);
+
+      // Eventos al menú.
+      $li.delegate('.menu-item', 'click', showPedidos);
     }
-  });
+  };
 
   // Sockets.
   // Crea un pedido.
   socket.on('pedido:creado', function(data) {
-    //parsePedido(data.pedido);
-    console.log(data);
+    for(i = 0; i < data.pedidos.length; i++) {
+      pedido = data.pedidos[i];
+      if(pedido.local == cafetin.local)
+        parsePedido(pedido);
+    }
   });
 
   // Quita un pedido.
