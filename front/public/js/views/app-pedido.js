@@ -39,7 +39,7 @@ var cafetin = cafetin || {};
         'platoNombre': this.$nombre.val(),
         'platoId': this.$nombre.data('id'),
         'cantidad': this.$cantidad.val()
-      });
+      }, {validate: true});
       //console.log(cafetin.theDetalles.length);
       if (cafetin.theDetalles.length > 0) this.$actions.show('clip');
       this.clearInputs();

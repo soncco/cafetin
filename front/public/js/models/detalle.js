@@ -8,6 +8,18 @@ var cafetin = cafetin || {};
         platoNombre: '',
         platoId: 0
       };
+    },
+
+    validate: function(attribs) {
+      if(attribs.platoNombre == '' || attribs.platoId < 1) {
+        return 'Ingresa el nombre del plato';
+      }
+    },
+
+    initialize: function() {
+      this.on('invalid', function(model, error) {
+        alert(error);
+      });
     }
   });
 })();

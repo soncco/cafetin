@@ -8,7 +8,7 @@ var cafetin = cafetin || {};
   $( "#cliente" ).autocomplete({
     source: function( request, response ) {
       $.ajax({
-        url: cafetin.server + "/cliente/" + request.term,
+        url: cafetin.server + "/cliente/" + cafetin.local + "/" + request.term,
         dataType: "jsonp",
         success: function( data ) {
           response( $.map( data, function( item ) {
