@@ -172,7 +172,8 @@ def pedido_printed(request):
     pedido = Pedido.objects.get(id = dictx.get('id'))
 
     try:
-        pedido.estado = 'I'
+        if pedido.estado != 'P':
+          pedido.estado = 'I'
         pedido.save()
     except Exception as e:
       print '%s (%s)' % (e.message, type(e))

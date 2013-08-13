@@ -46,8 +46,6 @@ var cafetin = cafetin || {};
     $status = $('<span class="pure-button"></span>');
     $print = $('<button class="pure-button pure-button-secondary print" data-id=""></button>&nbsp;')
       .html($('<i class="icon-print"></i>'));
-    $pay = $('<button class="pure-button pure-button-success pay" data-id=""></button>&nbsp;')
-      .html($('<i class="icon-money"></i>'));
     $delete = $('<button class="pure-button pure-button-error delete" data-id=""></button>')
       .html($('<i class="icon-remove"></i>'));
 
@@ -62,7 +60,6 @@ var cafetin = cafetin || {};
     switch(pedido.estado) {
       case 'R':
         $print.hide();
-        $pay.hide();
       break;
       case 'A':
         $pay.hide();
@@ -78,7 +75,6 @@ var cafetin = cafetin || {};
 
     $td.clone()
         .append($print.data('id', pedido.id))
-        .append($pay.data('id', pedido.id))
         .append($delete.data('id', pedido.id))
       .addClass('actions')
       .appendTo($tr);
@@ -151,15 +147,15 @@ var cafetin = cafetin || {};
   // Marca un pedido como impreso.
   socket.on('pedido:printed', function(data) {
     
-    $tbody.find('#row-' + data.id + ' .pay')
-      .toggle('puff');
-
-    $tbody.find('#row-' + data.id + ' span')
-      .hide('puff')
-      .removeClass('pure-button-warning')
-      .addClass('pure-button-secondary')
-      .text('Impreso')
-      .show('slide');
+    $el = $tbody.find('#row-' + data.id + ' span');
+    if($el.text() != 'Pagado') {
+      $el
+        .hide('puff')
+        .removeClass('pure-button-warning')
+        .addClass('pure-button-secondary')
+        .text('Impreso')
+        .show('slide');
+    }
   });
 
   // Marca un pedido como pagado.

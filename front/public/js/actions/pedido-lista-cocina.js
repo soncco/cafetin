@@ -168,15 +168,15 @@ var cafetin = cafetin || {};
   // Marca un pedido como impreso.
   socket.on('pedido:printed', function(data) {
     
-    $tbody.find('#row-' + data.id + ' .pay')
-      .toggle('puff');
-
-    $tbody.find('#row-' + data.id + ' span')
-      .hide('puff')
-      .removeClass('pure-button-warning')
-      .addClass('pure-button-secondary')
-      .text('Impreso')
-      .show('slide');
+    $el = $tbody.find('#row-' + data.id + ' span');
+    if($el.text() != 'Pagado') {
+      $el
+        .hide('puff')
+        .removeClass('pure-button-warning')
+        .addClass('pure-button-secondary')
+        .text('Impreso')
+        .show('slide');
+    }
   });
 
   // Marca un pedido como pagado.
