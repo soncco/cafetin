@@ -10,6 +10,7 @@ urlpatterns = patterns('cafetin.views',
 
   url(r'^login$', 'login', name = 'login'),
 
+  url(r'^cliente/(?P<local>.*)/(?P<q>.*)/$', 'busqueda_clientes_local', name = 'clientes_local_json'),
   url(r'^cliente/(?P<q>.*)/$', 'busqueda_clientes', name = 'clientes_json'),
 
   url(r'^plato/(?P<local>.*)/(?P<q>.*)/$', 'busqueda_platos_local', name = 'platos_local_json'),
