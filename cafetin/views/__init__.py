@@ -1,3 +1,4 @@
+from general import *
 from plato import *
 from cliente import *
 from pedido import *

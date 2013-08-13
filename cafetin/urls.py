@@ -6,6 +6,8 @@ urlpatterns = patterns('cafetin.views',
   # Locales.
   #url(r'^local/$', 'lista', name = 'local_lista'),
 
+  url(r'^$', 'index', name = 'index'),
+
   url(r'^login$', 'login', name = 'login'),
 
   url(r'^cliente/(?P<q>.*)/$', 'busqueda_clientes', name = 'clientes_json'),
