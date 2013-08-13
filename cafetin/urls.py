@@ -15,12 +15,18 @@ urlpatterns = patterns('cafetin.views',
 
   url(r'^plato/(?P<local>.*)/(?P<q>.*)/$', 'busqueda_platos_local', name = 'platos_local_json'),
   url(r'^plato/(?P<q>.*)/$', 'busqueda_platos', name = 'platos_json'),
+
+  url(r'^punto/json/(?P<local>.*)$', 'lista_puntos_local', name = 'puntos_local_json'),
   
 
   url(r'^carta/json$', 'carta', name = 'carta_json'),
   url(r'^pedido/add$', 'add_pedido', name = 'agrega_pedido'),
+  
   url(r'^pedido/json$', 'json_pedidos', name = 'pedidos_json'),
   url(r'^pedido/json/mozo/(?P<mozo>.*)/$', 'json_pedidos_mozo', name = 'pedidos_mozo_json'),
+  url(r'^pedido/json/punto/(?P<punto>.*)/$', 'json_pedidos_punto', name = 'pedidos_punto_json'),
+
+
   url(r'^pedido/remove$', 'remove_pedido', name = 'quita_pedido'),
   url(r'^pedido/atender$', 'atender_pedido', name = 'atender_pedido'),
   url(r'^pedido/printed$', 'pedido_printed',   name = 'pedido_printed'),
