@@ -1,0 +1,71 @@
+<html>
+<head>
+  <style>
+    @page {
+      size: A6 portrait;
+      margin: 0.5cm;
+    }
+
+    * {font-size: 0.2cm;}
+    .maintitle {
+      font-size: 0.6cm !important;
+      margin-bottom: 0;
+      border-bottom: 1px solid #000;
+    }
+    .smallcell {width: 20%;}  
+    .align-right { text-align: right;}
+    .align-left { text-align: left;}
+    .head td {
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+  <!-- Content for Static Frame 'header' -->
+  <div id="header_content">
+    <table border="0" cellpading="2" style="border-bottom: 1px solid #444" class="color">
+      <tbody>
+        <tr>
+          <td>Niños Hotel</td>
+          <td class="align-right">Nro: <span style="font-family: serif">{{pedido.id}}</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <h1 class="maintitle">Detalle de Consumo</h1>
+  </div>
+
+  <!-- HTML Content -->
+  <p><strong>Cliente</strong>: {{pedido.para}}</p>
+  <p><strong>Habitación</strong>: {{ pedido.para.hospedado_en }}</p>
+  <p><strong>Atendido por</strong>: {{ pedido.hecho_por.first_name }} {{ pedido.hecho_por.last_name }}</p>
+  <p><strong>Fecha</strong>: {{ pedido.cuando }}</p>
+  <table border="1" cellpadding="5">
+    <thead>
+      <tr style="background: #EEE;">
+        <th class="smallcell">Cantidad</th>
+        <th>Plato</th>
+        <th class="smallcell">Unidad S/.</th>
+        <th class="smallcell">SubTotal S/.</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for detalle in pedido.pedidodetalle_set.all %}
+      <tr>
+        <td class="smallcell">{{ detalle.cantidad }}</td>
+        <td>{{ detalle.plato.nombre }}</td>
+        <td class="align-right">{{ detalle.plato.precio }}</td>
+        <td class="align-right">{% widthratio detalle.plato.precio 1 detalle.cantidad %}</td>
+      </tr>
+      {% endfor %} 
+    </tbody>
+    <tfoot>
+      <th colspan="3" class="align-right">Total:</th>
+      <th class="align-right">{{ total }}</th>
+    </tfoot>
+  </table>
+  <p><strong>Notas</strong>: {{ pedido.notas }}</p>
+  <br>
+
+  <p style="text-align: center; border-top: 2px solid #000; padding-top: 10px">Recibí Conforme: {{ pedido.para }}</p>
+</body>
+</html>

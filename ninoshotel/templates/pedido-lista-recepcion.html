@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Facturar</h1>
+<form class="form-inline" role="form" id="the-form">
+  <div class="form-group">
+    <select name="habitacion" id="habitacion" class="form-control" required="required">
+      <option value="">Escoge una habitación</option>
+      {% for habitacion in habitaciones %}
+      <option value="{{ habitacion.id }}">{{ habitacion.nombre }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <button class="btn btn-success ver" type="submit">Ver pedidos</button>
+</form>
+
+<table class="table table-striped" id="pedido-lista" style="display: none">
+  <thead>
+    <tr>
+      <th><input type="checkbox"></th>
+      <th>Cliente</th>
+      <th>Cantidad</th>
+      <th>Pedido</th>
+      <th>Fecha</th>
+      <th>Estado</th>
+      <th>Unitario</th>
+      <th>Subtotal</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+
+{% csrf_token %}
+{% endblock %}
+{% block js %}
+<script id="template" type="text/template">
+  {% templatetag openvariable %}#pedidos{% templatetag closevariable %}
+  {% templatetag openvariable %}#detalles{% templatetag closevariable %}
+  <tr id="row-{% templatetag openvariable %} id {% templatetag closevariable %}">
+    <td><input type="checkbox"></td>
+    <td>{% templatetag openvariable %} para {% templatetag closevariable %}</td>
+    <td>{% templatetag openvariable %} cantidad {% templatetag closevariable %} </td>
+    <td>{% templatetag openvariable %} plato {% templatetag closevariable %}</td>
+    <td class="timeago" title="{% templatetag openvariable %} fecha {% templatetag closevariable %}">{% templatetag openvariable %} fecha {% templatetag closevariable %}</td>
+    <td class="estado">{% templatetag openvariable %} estado {% templatetag closevariable %}</td>
+    <td>{% templatetag openvariable %} precio {% templatetag closevariable %}</td>
+    <td>{% templatetag openvariable %} sub {% templatetag closevariable %}</td>
+  </tr>
+  {% templatetag openvariable %}/detalles{% templatetag closevariable %}
+  {% templatetag openvariable %}/pedidos{% templatetag closevariable %}
+  {% templatetag openvariable %}^pedidos{% templatetag closevariable %}
+  <tr id="row-{% templatetag openvariable %} id {% templatetag closevariable %}">
+    <td colspan="6">No existen pedidos :(</td>
+  </tr>
+  {% templatetag openvariable %}/pedidos{% templatetag closevariable %}
+</script>
+<script src="/media/js/vendor/jquery.timeago.js"></script>
+<script src="/media/js/vendor/mustache.js"></script>
+<script src="/media/js/actions/pedido-lista-recepcion.js"></script>
+{% endblock %}

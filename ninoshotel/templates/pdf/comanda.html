@@ -1,0 +1,140 @@
+<html>
+<head>
+  <style>
+    @page {
+      size: A6 portrait;
+      margin: 5pt;
+      @frame header_frame {
+        -pdf-frame-content: header_content;
+        top: 10pt;
+        left: 10pt;
+        right: 10pt;
+      }
+      @frame content_frame {
+        -pdf-frame-content: body_content;
+        top: 70pt;
+        left: 10pt;
+        right: 10pt;
+      }
+      @frame footer_frame {
+          -pdf-frame-content: footer_content;
+          left: 50pt; width: 512pt; top: 772pt; height: 20pt;
+      }
+    }
+
+    img {zoom 80%}
+
+    .comanda {
+      background: #888;
+      color: #fff;
+      padding: 0pt 10pt;
+      padding-top: 5pt;
+      font-size: 16pt;
+    }
+
+    .align-center {
+      text-align: center;
+    }
+
+    .align-right {
+      text-align: right;
+    }
+
+    .smallcell {
+      width: 55pt;
+    }
+
+    .nro {
+      padding-left: 4pt;
+    }
+
+    .thenro {
+      border: 1px solid black;
+      padding-top: 4pt;
+      padding-bottom: -4pt;
+      font-family: serif;
+      font-size: 12pt;
+    }
+
+    .nomargin {
+      padding: 0;
+      margin:  0;
+    }
+
+    .firma {
+      margin-top: 50pt;
+      text-align: center;
+      font-size: 9pt;
+      border-top: 1pt solid #000;
+      padding-top: 3pt;
+    }
+
+    #body_content {
+      font-size: 8pt;
+    }
+
+    .direccion {
+      font-size: 7pt;
+      margin: 0;
+      padding: 0;
+    }
+
+    .titulo {
+      font-size: 15pt;
+      font-weight: bold;
+      line-height: 7pt;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- Content for Static Frame 'header' -->
+  <div id="header_content">
+    <table>
+      <tr>
+        <td colspan="2">
+          <p class="titulo"><img src="logo.jpg">Niños Hotel {{ comanda.local }}</p>
+          <p class="direccion">{{ comanda.local.direccion }}</p>
+        </td>
+      </tr>
+      <tr>
+        <td><h2 class="comanda align-center">COMANDA</h2></td>
+        <td class="nro align-center">
+          <p class="thenro">N° {{ comanda.numero }}</p>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div id="body_content">
+    <p class="nomargin"><strong>Cliente</strong>: {{ comanda.pedido.para }} en habitación {{ comanda.pedido.para.hospedado_en }}</p>
+    <p class="nomargin"><strong>Atendido por</strong>: {{ comanda.pedido.hecho_por.first_name }} {{ comanda.pedido.hecho_por.last_name }}</p>
+    <p class="nomargin"><strong>Fecha</strong>: {{ comanda.pedido.cuando }}</p>
+    <table border="1" cellpadding="5">
+      <thead>
+        <tr style="background: #EEE;">
+          <th class="smallcell" style="background: #EEE;">CANT.</th>
+          <th style="background: #EEE;">PEDIDO</th>
+          <th class="smallcell" style="background: #EEE;">IMPORTE</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for detalle in comanda.comandadetalle_set.all %}
+        <tr>
+          <td class="smallcell">{{ detalle.cantidad }}</td>
+          <td>{{ detalle.plato.nombre }}</td>
+          <td class="align-right">{{ detalle.subtotal }}</td>
+        </tr>
+        {% endfor %} 
+      </tbody>
+      <tfoot>
+        <th colspan="2" class="align-right">TOTAL S/.</th>
+        <th class="align-right">{{ comanda.total }}</th>
+      </tfoot>
+    </table>
+    <p class="firma">Firma: {{ comanda.pedido.para }}</p>
+  </div>
+
+
+</body>
+</html>

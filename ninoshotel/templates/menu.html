@@ -1,0 +1,18 @@
+{% load user_groups %}
+{% ifusergroup Mozos %}
+<li><a href="{% url 'pedido' %}">Pedido</a></li>
+<li><a href="{% url 'pedido_lista_mozo' %}">Estado de pedidos</a></li>
+{% endifusergroup %}
+{% ifusergroup Cocineros %}
+<li><a href="{% url 'pedido_lista_cocina' %}">Atender pedidos</a></li>
+{% endifusergroup %}
+{% ifusergroup Recepcionistas %}
+<li><a href="{% url 'pedido_lista_recepcion' %}">Manejar pedidos</a></li>
+{% endifusergroup %}
+{% if user.is_authenticated %}
+<li><a href="{% url 'the_logout' %}">Salir</a></li>
+{% endif %}
+{% ifusergroup Administradores %}
+{% endifusergroup %}
+{% ifusergroup Recepcionistas %}
+{% endifusergroup %}

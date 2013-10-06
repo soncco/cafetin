@@ -1,0 +1,134 @@
+<html>
+<head>
+  <style>
+    @page {
+      size: A6 portrait;
+      margin: 5pt;
+      @frame header_frame {
+        -pdf-frame-content: header_content;
+        top: 10pt;
+        left: 10pt;
+        right: 10pt;
+      }
+      @frame content_frame {
+        -pdf-frame-content: body_content;
+        top: 70pt;
+        left: 10pt;
+        right: 10pt;
+      }
+      @frame footer_frame {
+          -pdf-frame-content: footer_content;
+          left: 10pt; top: 350pt; right: 20pt;
+      }
+    }
+
+    img {zoom 80%}
+
+    .comanda {
+      background: #888;
+      color: #fff;
+      padding: 0pt 10pt;
+      padding-top: 5pt;
+      font-size: 16pt;
+    }
+
+    .align-center {
+      text-align: center;
+    }
+
+    .align-right {
+      text-align: right;
+    }
+
+    .smallcell {
+      width: 55pt;
+    }
+
+    .nro {
+      padding-left: 4pt;
+    }
+
+    .thenro {
+      border: 1px solid black;
+      padding-top: 4pt;
+      padding-bottom: -4pt;
+      font-family: serif;
+      font-size: 12pt;
+    }
+
+    .nomargin {
+      padding: 0;
+      margin:  0;
+    }
+
+    .firma {
+      margin-top: 50pt;
+      text-align: center;
+      font-size: 9pt;
+      border-top: 1pt solid #000;
+      padding-top: 3pt;
+    }
+
+    #body_content {
+      font-size: 8pt;
+    }
+
+    .direccion {
+      font-size: 7pt;
+      margin: 0;
+      padding: 0;
+    }
+
+    .titulo {
+      font-size: 15pt;
+      font-weight: bold;
+      line-height: 7pt;
+      margin: 0;
+      padding: 0;
+    }
+
+    .invisible {
+      visibility: hidden;
+      color: #FFF;
+    }
+  </style>
+</head>
+<body>
+  <!-- Content for Static Frame 'header' -->
+  <div id="header_content">
+  </div>
+  <div id="body_content">
+    <p class="nomargin"><strong class="invisible">Cliente</strong> {{pedido.para}} en habitación {{ pedido.para.hospedado_en }}</p>
+    <table cellpadding="5">
+        <thead class="hidden">
+          <th class="invisible smallcell">CANT.</th>
+          <th class="invisible ">DETALLE DE ALIMENTOS</th>
+          <th class="invisible smallcell">UNIT.</th>
+          <th class="invisible smallcell">SUBTOTAL</th>
+        </thead>
+        <tbody>
+        {% for detalle in pedido.pedidodetalle_set.all %}
+        {% if detalle.plato.tipo.recibo == 'D'%}
+        <tr>
+          <td class="smallcell">{{ detalle.cantidad }}</td>
+          <td>{{ detalle.plato.nombre }}</td>
+          <td>{{ detalle.plato.sub }}</td>
+          <td class="align-right smallcell">{{ detalle.sub }}</td>
+        </tr>
+        {% endif %}
+        {% endfor %} 
+      </tbody>
+      <tfoot>
+        <th colspan="3" class="align-right"></th>
+        <th class="align-right">{{ total }}</th>
+      </tfoot>
+    </table>
+
+  </div>
+  <div id="footer_content">
+    <p class="nomargin align-right">{{ pedido.cuando|date:"d m Y"}}</p>
+  </div>
+
+
+</body>
+</html>

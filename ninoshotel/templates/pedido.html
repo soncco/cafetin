@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Crear pedido</h1>
+<div class="row" id="container">
+  <div class="col-xs-6">
+    <div class="pedido-forms">
+      <div class="form-group">
+        <label for="cliente">Cliente</label>
+        <input id="cliente" type="text" placeholder="Escoge un cliente" class="form-control">
+      </div>
+      <div class="form-inline">
+        <div class="form-group">
+          <input id="cantidad" type="number" placeholder="Cantidad" class="form-control" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <input id="platos" type="text" placeholder="Plato" class="form-control">
+        </div>
+        <input type="hidden" id="current-plato" data-id="" value="">
+        <button type="button" class="btn btn-success add-plato">Añadir</button>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-6">
+    <div class="pedido-details">
+      <table class="table table-striped">
+        <caption class="cliente-nombre" data-id=""></caption>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Plato</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="detalle-pedido">
+        </tbody>
+      </table>
+      <div id="actions" style="display: none;">
+        <p><textarea id="observaciones" placeholder="Observaciones" class="form-control"></textarea></p>
+        <p class="text-center">
+          <button class="btn btn-primary btn-sm do">Guardar</button>
+          <button class="btn btn-info btn-sm do-clear">Guardar y hacer otro</button>
+          <button class="btn btn-danger btn-sm clear">Limpiar</button>
+          {% csrf_token %}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block js %}
+<script id="template" type="text/template">
+  <td><%= cantidad %></td>
+  <td><%= platoNombre %></td>
+  <td><a class="btn btn-sm btn-danger remove-plato"><i class="icon icon-remove"></i></a></td>
+</script>
+<script src="/media/js/vendor/underscore-min.js"></script>
+<script src="/media/js/vendor/backbone-min.js"></script>
+<script src="/media/js/models/detalle.js"></script>
+<script src="/media/js/collections/detalles.js"></script>
+<script src="/media/js/views/detalles.js"></script>
+<script src="/media/js/views/app-pedido.js"></script>
+<script src="/media/js/actions/pedido.js"></script>
+{% endblock %}

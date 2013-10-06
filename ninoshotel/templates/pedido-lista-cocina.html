@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Lista de pedidos</h1>
+<ul class="nav nav-tabs">
+{% for punto in puntos %}
+<li{% if forloop.first %} class="active"{% endif %}>
+  <a href="#tab-{{ punto.id }}" data-toggle="tab">{{ punto }}</a>
+</li>
+{% endfor %}
+</ul>
+<div class="tab-content">
+{% for punto in puntos %}
+  <div id="tab-{{ punto.id }}" class="tab-pane{% if forloop.first %} active{% endif %}">
+    <table class="table table-striped pedido-lista" id="pedido-lista-{{ punto.id }}">
+      <thead>
+        <tr>
+          <th>Cliente</th>
+          <th>Pedido</th>
+          <th>Comentarios</th>
+          <th>Mozo</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for pedido in pedidos %}
+        {% ifequal pedido.punto punto %}
+          <tr id="row-{{ pedido.id }}">
+            <td>{{ pedido.para }}</td>
+            <td>
+              <ul class="list-unstyled">
+                {% for detalle in pedido.pedidodetalle_set.all %}
+                <li>{{ detalle.cantidad }} x {{ detalle.plato }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+            <td>{{ pedido.notas }}</td>
+            <td>{{ pedido.first_name }}</td>
+            <td class="timeago" title="{{ pedido.cuando |date:"c"}}">{{ pedido.cuando |date:"D d M Y"}}</td>
+            <td>
+              {% ifequal pedido.estado 'R' %}
+              <span class="btn btn-sm btn-danger">Recibido</span>
+              {% endifequal %}
+              {% ifequal pedido.estado 'A' %}
+              <span class="btn btn-sm btn-warning">Atendido</span>
+              {% endifequal %}
+              {% ifequal pedido.estado 'I' %}
+              <span class="btn btn-sm btn-info">Impreso</span>
+              {% endifequal %}
+              {% ifequal pedido.estado 'P' %}
+              <span class="btn btn-sm btn-success">Pagado</span>
+              {% endifequal %}
+            </td>
+            </td>
+            <td>
+              {% ifequal pedido.estado 'R' %}
+              <button class="btn btn-sm btn-warning attend" data-id={{ pedido.id }}><i class="icon icon-check"></i></button>
+              {% endifequal %}
+            </td>
+          </tr>
+        {% endifequal %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endfor %}
+</div>
+
+{% csrf_token %}
+{% endblock %}
+{% block js %}
+<script src="/media/js/vendor/jquery.timeago.js"></script>
+<script src="/media/js/actions/pedido-lista-cocina.js"></script>
+{% endblock %}
